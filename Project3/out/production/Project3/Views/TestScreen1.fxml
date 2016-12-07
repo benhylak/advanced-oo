@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="641.0" prefWidth="660.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TestController">
+   <children>
+      <ProgressBar id="progress_Bar" fx:id="progress_Bar" layoutX="190.0" layoutY="583.0" prefHeight="20.0" prefWidth="295.0" progress="0.0" />
+      <Slider id="slider_bar" layoutX="190.0" layoutY="560.0" prefHeight="16.0" prefWidth="295.0" />
+      <TableView id="main_table" fx:id="table" layoutX="143.0" layoutY="424.0" prefHeight="94.0" prefWidth="394.0">
+        <columns>
+          <TableColumn prefWidth="117.0" text="C1" />
+          <TableColumn prefWidth="117.0" text="C2" />
+        </columns>
+      </TableView>
+      <LineChart fx:id="chart" layoutX="11.0" layoutY="131.0" prefHeight="271.0" prefWidth="638.0">
+        <xAxis>
+          <NumberAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <ComboBox fx:id="structures_ComboBox" layoutX="117.0" layoutY="69.0" onAction="#strucuture_Selection_Changed" prefHeight="27.0" prefWidth="186.0" />
+      <ComboBox fx:id="tests_ComboBox" layoutX="359.0" layoutY="68.0" onAction="#test_Selection_Changed" prefHeight="27.0" prefWidth="186.0" />
+   </children>
+</AnchorPane>
