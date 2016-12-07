@@ -1,22 +1,30 @@
 package Models;
 
 /**
+ * Class for running a TimedTest on any function. To create a test, make an anonymous class that implements
+ * the abstract test(N) function and returns the time it takes on N elements.
  * Created by benhylak on 12/4/16.
  */
-public abstract class Test
+public abstract class TimedTest
 {
+    /**
+     * Test to run
+     * @param N number of elements in data structure while test is executed
+     * @return long representing the time it takes for the function to complete
+     */
     abstract long test(int N);
     abstract String getName();
 
-    int runsForAvg;
+    int runsForAvg; //how many runs to be used in average
 
-    public Test(int runs)
+    public TimedTest(int runs)
     {
         this.runsForAvg = runs;
     }
 
     /**
      * Runs the test a preset amount of times and returns an average of the result.
+     * @param N number of elements in data structure during test
      */
     public long avgTest(int N)
     {
@@ -54,6 +62,11 @@ public abstract class Test
         return average(runResults);
     }
 
+    /**
+     * Averages an array of longs
+     * @param nums array of longs
+     * @return average value of array
+     */
     public static long average(long[] nums)
     {
         long sum = 0;
