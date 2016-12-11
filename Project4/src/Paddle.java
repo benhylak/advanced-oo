@@ -1,5 +1,7 @@
 import java.awt.*;
 
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -30,6 +32,11 @@ class Paddle extends GameObj implements Drawable {
 	// Instance variables
 	private Rectangle rectangle;
 
+//	public BoundingBox.BoundingPoint getLowerLeft()
+//	{
+//		return new BoundingBox.BoundingPoint(rectangle.getLayoutX() + rectangle.getTranslateX(),
+//				rectangle.getLayoutY() + rectangle.getTranslateY());
+//	}
 	/**
 	 * @return the x coordinate of the center of the paddle.
 	 */
@@ -94,5 +101,11 @@ class Paddle extends GameObj implements Drawable {
 	public Node getDrawing()
 	{
 		return getRectangle();
+	}
+
+	@Override
+	public Bounds getBoundingBox()
+	{
+		return rectangle.getBoundsInParent();
 	}
 }

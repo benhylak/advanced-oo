@@ -1,6 +1,11 @@
 /**
  * Created by benhylak on 12/10/16.
  */
-public class Wall
+public abstract class Wall extends GameObj
 {
+    @Override
+    public boolean isCollision(GameObj obj)
+    {
+        return false;
+    }
 }

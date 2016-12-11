@@ -22,7 +22,7 @@ public class GameStateChangedEvent extends EventObject
 
     public interface GameStateListener
     {
-        public void handleStateChange();
+        public void handleStateChange(GameStateChangedEvent e);
 
     }
 }
