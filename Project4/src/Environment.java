@@ -16,12 +16,16 @@ public class Environment
     ArrayList<GameStateChangedEvent.GameStateListener> stateListeners = new ArrayList<>();
 
     Ball ball;
-    Wall bottomWall;
     Paddle paddle;
+
+    int currentLives;
+    final static int MAX_LIVES = 5;
+
     /**
      * Defines different states of the game.
      */
-    public static enum GameState {
+    public static enum GameState
+    {
         WON, LOST, ACTIVE, NEW
     }
 
@@ -29,8 +33,6 @@ public class Environment
 
     int width;
     int height;
-
-    Wall right_wall;
 
     public Environment(int width, int height)
     {
@@ -42,12 +44,22 @@ public class Environment
         gamePieces.add(paddle = new Paddle());
         gamePieces.add(ball = new Ball());
 
-        ball.addAnimalHitListener(e -> {
-           System.out.println("Hit");
+        ball.addAnimalHitListener(e ->
+        {
+            System.out.println("Hit");
         });
 
-        ball.addWallCollisionListener(e->{
-            System.out.println("collision");
+        ball.addWallCollisionListener(e ->
+        {
+            if (e.getSource() instanceof HorizontalWall.LowerWall)
+            {
+                currentLives--;
+            }
+
+            if (currentLives <= 0)
+            {
+                changeState(GameState.LOST);
+            }
         });
 
         Wall left_wall = new VerticalWall.LeftWall(width, height);
@@ -57,18 +69,12 @@ public class Environment
         Wall bottom_wall = new HorizontalWall.LowerWall(width, height);
 
         gamePieces.addAll(Arrays.asList(left_wall, right_Wall, top_wall, bottom_wall)); //add environment walls
-
-        this.right_wall = right_Wall;
     }
 
     public void startGame()
     {
-        if(state!=GameState.ACTIVE)
-        {
-            state = GameState.ACTIVE;
-
-            notifyStateChange();
-        }
+        currentLives = MAX_LIVES;
+        changeState(GameState.ACTIVE);
     }
 
     public void runTimeStep(long deltaNanoTime)
@@ -77,22 +83,18 @@ public class Environment
         ball.updatePosition(deltaNanoTime);
 
         ball.checkCollisions(gamePieces);
-
-//        if(ball.getBoundingBox().getMaxX() > width)
-//        {
-//            System.out.println(String.format("Ball coordinates: X: %f Y: %f", ball.getBoundingBox().getMaxX(), ball.getBoundingBox().getMaxY()));
-//            System.out.println(String.format("Wall Min: X: %f Y: %f", right_wall.getBoundingBox().getMinX(), right_wall.getBoundingBox().getMinY()));
-//
-//
-//
-//        }
     }
 
     public void newGame()
     {
-        if(state!=GameState.NEW)
+        changeState(GameState.NEW);
+    }
+
+    public void changeState(GameState nextState)
+    {
+        if(nextState != state)
         {
-            state = GameState.NEW;
+            state = nextState;
             notifyStateChange();
         }
     }
@@ -103,11 +105,6 @@ public class Environment
        {
            stateListeners.get(i).handleStateChange(new GameStateChangedEvent(this, state));
        }
-
-//        for(GameStateChangedEvent.GameStateListener e : stateListeners)
-//        {
-//
-//        }
     }
 
     public Node[] getDrawings()
