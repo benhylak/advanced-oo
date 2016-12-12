@@ -95,17 +95,14 @@ public class Ball extends GameObj implements Drawable
 			{
 				if(obj instanceof Wall)
 				{
-					notifyWallCollision((Wall)obj);
+					notifyWallHit((Wall)obj);
 				}
 				else if(obj instanceof Animal)
 				{
 					notifyAnimalHit((Animal)obj);
 				}
 
-				if(!(obj instanceof Ball))
-				{
-					adjustForCollision(obj);
-				}
+				adjustForCollision(obj);
 			}
 		}
 	}
@@ -131,7 +128,7 @@ public class Ball extends GameObj implements Drawable
 			{
 				hitDir = HitDirection.ABOVE;
 			}
-			else hitDir = HitDirection.Y_UNK;
+			else hitDir = HitDirection.Y_UNK; //somewhere in the middle of the object :(
 
 		}
 		else if(isXCollision(objBounds))
@@ -144,7 +141,7 @@ public class Ball extends GameObj implements Drawable
 			{
 				hitDir = HitDirection.RIGHT;
 			}
-			else hitDir = HitDirection.X_UNK;
+			else hitDir = HitDirection.X_UNK; //somewhere in the middle of the object :(
 		}
 
 		return hitDir;
@@ -266,7 +263,7 @@ public class Ball extends GameObj implements Drawable
 		animalHitListeners.add(listener);
 	}
 
-	public void notifyWallCollision(Wall wall)
+	public void notifyWallHit(Wall wall)
 	{
 		for(HitEvent.HitListener<Wall> l : wallHitListeners)
 		{
