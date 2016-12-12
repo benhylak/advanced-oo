@@ -2,6 +2,7 @@ import javafx.scene.Node;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 
@@ -29,6 +30,8 @@ public class Environment
     int width;
     int height;
 
+    Wall right_wall;
+
     public Environment(int width, int height)
     {
         this.width = width;
@@ -46,6 +49,16 @@ public class Environment
         ball.addWallCollisionListener(e->{
             System.out.println("collision");
         });
+
+        Wall left_wall = new VerticalWall.LeftWall(width, height);
+        Wall right_Wall = new VerticalWall.RightWall(width, height);
+
+        Wall top_wall = new HorizontalWall.UpperWall(width, height);
+        Wall bottom_wall = new HorizontalWall.LowerWall(width, height);
+
+        gamePieces.addAll(Arrays.asList(left_wall, right_Wall, top_wall, bottom_wall)); //add environment walls
+
+        this.right_wall = right_Wall;
     }
 
     public void startGame()
@@ -60,9 +73,19 @@ public class Environment
 
     public void runTimeStep(long deltaNanoTime)
     {
+        paddle.updateVelocity(deltaNanoTime);
         ball.updatePosition(deltaNanoTime);
 
         ball.checkCollisions(gamePieces);
+
+//        if(ball.getBoundingBox().getMaxX() > width)
+//        {
+//            System.out.println(String.format("Ball coordinates: X: %f Y: %f", ball.getBoundingBox().getMaxX(), ball.getBoundingBox().getMaxY()));
+//            System.out.println(String.format("Wall Min: X: %f Y: %f", right_wall.getBoundingBox().getMinX(), right_wall.getBoundingBox().getMinY()));
+//
+//
+//
+//        }
     }
 
     public void newGame()

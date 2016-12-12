@@ -15,7 +15,7 @@ class Paddle extends GameObj implements Drawable {
 	/**
 	 * The height of the paddle.
 	 */
-	public static final int PADDLE_HEIGHT = 5;
+	public static final int PADDLE_HEIGHT = 20;
 	/**
 	 * The initial position (specified as a fraction of the game height) of center of the paddle.
 	 */
@@ -28,6 +28,14 @@ class Paddle extends GameObj implements Drawable {
 	 * The maximum position (specified as a fraction of the game height) of center of the paddle.
 	 */
 	public static final double MAX_Y_LOCATION_FRAC = 0.9;
+
+	private double lastXPos;
+	private double lastYPos;
+
+	private double newestXPos;
+	private double newestYPos;
+
+	private long lastUpdateTime =0;
 
 	// Instance variables
 	private Rectangle rectangle;
@@ -55,12 +63,16 @@ class Paddle extends GameObj implements Drawable {
 	 * Constructs a new Paddle whose vertical center is at INITIAL_Y_LOCATION_FRAC * GameImpl.HEIGHT.
 	 */
 	public Paddle () {
-		final double x = PADDLE_WIDTH/2;
-		final double y = INITIAL_Y_LOCATION_FRAC * GameImpl.HEIGHT;
+		final double x = 0;
+		final double y = INITIAL_Y_LOCATION_FRAC * GameImpl.HEIGHT - PADDLE_HEIGHT/2;
 
 		rectangle = new Rectangle(0, 0, PADDLE_WIDTH, PADDLE_HEIGHT);
-		rectangle.setLayoutX(x-PADDLE_WIDTH/2);
-		rectangle.setLayoutY(y-PADDLE_HEIGHT/2);
+		rectangle.setLayoutX(x);
+		rectangle.setLayoutY(y);
+
+		lastXPos = newestXPos = x;
+		lastYPos = newestYPos = y;
+
 		rectangle.setStroke(Color.GREEN);
 		rectangle.setFill(Color.GREEN);
 	}
@@ -93,6 +105,9 @@ class Paddle extends GameObj implements Drawable {
 			newY = MAX_Y_LOCATION_FRAC * GameImpl.HEIGHT;
 		}
 
+		newestXPos = newX;
+		newestYPos = newY;
+
 		rectangle.setTranslateX(newX - (rectangle.getLayoutX() + PADDLE_WIDTH/2));
 		rectangle.setTranslateY(newY - (rectangle.getLayoutY() + PADDLE_HEIGHT/2));
 	}
@@ -107,5 +122,14 @@ class Paddle extends GameObj implements Drawable {
 	public Bounds getBoundingBox()
 	{
 		return rectangle.getBoundsInParent();
+	}
+
+	public void updateVelocity(long deltaNanoTime)
+	{
+		xVel = (newestXPos - lastXPos) / deltaNanoTime;
+		yVel = (newestYPos - lastYPos) / deltaNanoTime;
+
+		lastXPos = newestXPos; //update last updated positions so next velocity elapsed can be calculated
+		lastYPos = newestYPos;
 	}
 }

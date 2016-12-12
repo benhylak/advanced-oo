@@ -9,7 +9,7 @@ public abstract class GameObj
     double xVel;
     double yVel;
 
-    int position;
+    enum  HitDirection {ABOVE, BELOW, LEFT, RIGHT, Y_UNK, X_UNK, UNKNOWN}; //which way can this object hit the ball? (Unknown if gameobj is moveable)
 
     public boolean isCollision(GameObj o)
     {
@@ -18,6 +18,10 @@ public abstract class GameObj
 
     public abstract Bounds getBoundingBox();
 
+    public HitDirection getHitDirection()
+    {
+        return HitDirection.UNKNOWN;
+    }
 //    static class BoundingBox
 //    {
 //        static class BoundingPoint
