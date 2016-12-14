@@ -26,7 +26,7 @@ public class Ball extends GameObj implements Drawable
 	 */
 	public static final double INITIAL_VY = 1e-7;
 
-	public static final double MAX_V = 7e-7;
+	public static final double MAX_V = 5.5e-7;
 	// Instance variables
 	// (x,y) is the position of the center of the ball.
 	private double x, y;
@@ -87,6 +87,11 @@ public class Ball extends GameObj implements Drawable
 		circle.setTranslateY(y - (circle.getLayoutY() + BALL_RADIUS));
 	}
 
+	/**
+	 * Checks collisions between the ball and a collection of game objects. Raises either a wall hit event or
+	 * animal hit event if a wall or an animal is hit
+	 * @param objs Game objects to check
+	 */
 	public void checkCollisions(Collection<GameObj> objs)
 	{
 		for(GameObj obj : objs)
@@ -107,6 +112,12 @@ public class Ball extends GameObj implements Drawable
 		}
 	}
 
+	/**
+	 * Determins the direction the object hit this ball from
+	 *
+	 * @param obj The object that hit the ball
+	 * @return the direction the object contacted the ball from
+	 */
 	public HitDirection determineHitDirection(GameObj obj)
 	{
 		Bounds objBounds = obj.getBoundingBox();
@@ -147,6 +158,11 @@ public class Ball extends GameObj implements Drawable
 		return hitDir;
 	}
 
+	/**
+	 * Adjusts the ball's course from a collision with obj.
+	 *
+	 * @param obj
+	 */
 	public void adjustForCollision(GameObj obj)
 	{
 		Bounds objBounds = obj.getBoundingBox();
@@ -154,7 +170,7 @@ public class Ball extends GameObj implements Drawable
 
 		switch (determineHitDirection(obj))
 		{
-			case ABOVE:
+			case ABOVE: //ex: above wall
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
@@ -166,7 +182,7 @@ public class Ball extends GameObj implements Drawable
 				break;
 			}
 
-			case BELOW:
+			case BELOW: //ex: bottom wall or top of paddle
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
@@ -178,11 +194,11 @@ public class Ball extends GameObj implements Drawable
 				break;
 			}
 
-			case LEFT:
+			case LEFT: //object is to the LEFT of the ball
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
-					this.x = objBounds.getMaxX() - 1;
+					this.x = objBounds.getMaxX() - 1; //if the ball is inside the object, set a min distance
 				}
 
 				xVel =  Math.abs(xVel);
@@ -190,11 +206,11 @@ public class Ball extends GameObj implements Drawable
 				break;
 			}
 
-			case RIGHT:
+			case RIGHT: //object is to the right of the ball
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
-					this.x = objBounds.getMinX() - 1;
+					this.x = objBounds.getMinX() - 1; //if the ball is inside the object, set a min distance
 				}
 
 				xVel = -1 * Math.abs(xVel); //left collision
@@ -202,28 +218,33 @@ public class Ball extends GameObj implements Drawable
 				break;
 			}
 
-			case Y_UNK: reverseVelocityY();
+			case Y_UNK: reverseVelocityY(); //if hit direction is unknown, just reverse vel
 				break;
 
-			case X_UNK: reverseVelocityX();
+			case X_UNK: reverseVelocityX(); //if hit direction is unknown just reverse vel
 				break;
 
 		}
 
-		if(xVel>MAX_V) xVel = MAX_V;
+		if(xVel+obj.xVel>MAX_V); //if over max velocity, set to max velocity
 		if(yVel > MAX_V) yVel =MAX_V;
 
-		if(Math.abs(xVel+obj.xVel) > MAX_V || Math.abs(yVel + obj.yVel) > MAX_V)
+		if(Math.abs(xVel+2*obj.xVel) > MAX_V || Math.abs(yVel + 2*obj.yVel) > MAX_V)
 		{
-			xVel -= Math.max(obj.xVel, obj.yVel);
-			yVel -= Math.max(obj.xVel, obj.yVel);
+			xVel -= obj.xVel;
+			yVel -= obj.yVel;
 		}
 
-		this.xVel += obj.xVel;
-		this.yVel += obj.yVel;
+		this.xVel += 2* obj.xVel; //add objects to velocity to our velocity
+		this.yVel += 2* obj.yVel;
 	}
 
-	public boolean isYCollision(Bounds target)
+	/**
+	 * Determins if collision was in y direction (up and down). For example: a paddle
+	 * @param target
+	 * @return
+	 */
+	public boolean isYCollision(Bounds target) //did we collide in Y direction?
 	{
 		Bounds upperYBound = new BoundingBox(target.getMinX(), target.getMaxY(), target.getWidth(), 0);
 		Bounds lowerYBound = new BoundingBox(target.getMinX(), target.getMinY(),  target.getWidth(), 0);
@@ -233,6 +254,12 @@ public class Ball extends GameObj implements Drawable
 		return(ballBounds.intersects(upperYBound) || ballBounds.intersects(lowerYBound));
 	}
 
+	/**
+	 * Determins if collision was in x direction (side to side) For example: a left/right wall
+	 *
+	 * @param target
+	 * @return whether collision was in x direction
+	 */
 	public boolean isXCollision(Bounds target)
 	{
 		Bounds rightXBound = new BoundingBox(target.getMaxX(), target.getMinY(), 0, target.getHeight());
@@ -243,26 +270,44 @@ public class Ball extends GameObj implements Drawable
 		return(ballBounds.intersects(rightXBound) || ballBounds.intersects(leftXBound));
 	}
 
+	/**
+	 * Reverses the ball's velocity in the x direction
+	 */
 	private void reverseVelocityX()
 	{
 		xVel *= -1;
 	}
 
+	/**
+	 * Reverses the ball's velocity in the y direction
+	 */
 	private void reverseVelocityY()
 	{
 		yVel *= -1;
 	}
 
+	/**
+	 * Adds a listener for a collision with this ball and a wall
+	 * @param listener object that wants to listen
+	 */
 	public void addWallCollisionListener(HitEvent.HitListener<Wall> listener)
 	{
 		wallHitListeners.add(listener);
 	}
 
+	/**
+	 * Adds a listener for a collision with this ball and an animal
+	 * @param listener object that wants to hit
+	 */
 	public void addAnimalHitListener(HitEvent.HitListener<Animal> listener)
 	{
 		animalHitListeners.add(listener);
 	}
 
+	/**
+	 * Notify wall hit listeners that a wall was hit
+	 * @param wall that we hit
+	 */
 	public void notifyWallHit(Wall wall)
 	{
 		for(HitEvent.HitListener<Wall> l : wallHitListeners)
@@ -271,6 +316,10 @@ public class Ball extends GameObj implements Drawable
 		}
 	}
 
+	/**
+	 * Notify animal hit listeners that an animal was hit
+	 * @param a animal we hit
+	 */
 	public void notifyAnimalHit(Animal a)
 	{
 		for(HitEvent.HitListener l : animalHitListeners)
@@ -279,6 +328,10 @@ public class Ball extends GameObj implements Drawable
 		}
 	}
 
+	/**
+	 * Returns bounding box of this ball
+	 * @return bounding box of ball
+	 */
 	@Override
 	public Bounds getBoundingBox()
 	{

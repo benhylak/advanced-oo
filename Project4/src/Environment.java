@@ -1,9 +1,7 @@
 import javafx.scene.Node;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 
 /**
@@ -11,7 +9,8 @@ import java.util.Iterator;
  */
 public class Environment
 {
-    ArrayList<GameObj> gamePieces;
+    HashSet<GameObj> gamePieces;
+    HashSet<Node> envDrawings;
 
     ArrayList<GameStateChangedEvent.GameStateListener> stateListeners = new ArrayList<>();
 
@@ -20,6 +19,7 @@ public class Environment
 
     int currentLives;
     final static int MAX_LIVES = 5;
+
 
     /**
      * Defines different states of the game.
@@ -36,17 +36,21 @@ public class Environment
 
     public Environment(int width, int height)
     {
+        envDrawings = new HashSet<Node>();
+
         this.width = width;
         this.height = height;
 
-        gamePieces = new ArrayList<GameObj>();
+        gamePieces = new HashSet<GameObj>();
 
         gamePieces.add(paddle = new Paddle());
         ball = new Ball();
 
         ball.addAnimalHitListener(e ->
         {
-            System.out.println("Hit");
+            Animal a = (Animal)e.getSource();
+
+            a.hit();
         });
 
         ball.addWallCollisionListener(e ->
@@ -69,6 +73,36 @@ public class Environment
         Wall bottom_wall = new HorizontalWall.LowerWall(width, height);
 
         gamePieces.addAll(Arrays.asList(left_wall, right_Wall, top_wall, bottom_wall)); //add environment walls
+
+        for(int i = 25; i < height * 1/2; i += 70)
+        {
+            for(int j=25; j< width; j+= width/4)
+            {
+                gamePieces.add(new Trump(j, i));
+            }
+        }
+
+        loadDrawings();
+    }
+
+    private void loadDrawings()
+    {
+        envDrawings.clear();
+
+        for(GameObj g : gamePieces)
+        {
+            if(g instanceof Drawable)
+            {
+                envDrawings.add(((Drawable) g).getDrawing());
+            }
+        }
+
+        envDrawings.add(ball.getDrawing());
+    }
+
+    public Collection<Node> getDrawings()
+    {
+        return envDrawings;
     }
 
     public void startGame()
@@ -105,23 +139,6 @@ public class Environment
        {
            stateListeners.get(i).handleStateChange(new GameStateChangedEvent(this, state));
        }
-    }
-
-    public Node[] getDrawings()
-    {
-        ArrayList<Node> drawings = new ArrayList<Node>();
-
-        for(GameObj g : gamePieces)
-        {
-            if(g instanceof Drawable)
-            {
-                drawings.add(((Drawable) g).getDrawing());
-            }
-        }
-
-        drawings.add(ball.getDrawing());
-
-        return drawings.toArray(new Node[drawings.size()]);
     }
 
     public void addStateChangeListener(GameStateChangedEvent.GameStateListener listener)
