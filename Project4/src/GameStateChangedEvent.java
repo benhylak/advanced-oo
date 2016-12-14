@@ -3,7 +3,7 @@ import java.util.EventObject;
 
 
 /**
- * Created by benhylak on 12/10/16.
+ * Event representing a change in game state
  */
 public class GameStateChangedEvent extends EventObject
 {
@@ -15,6 +15,10 @@ public class GameStateChangedEvent extends EventObject
         this.state = state;
     }
 
+    /**
+     *
+     * @return state of game event just changed
+     */
     public Environment.GameState getState()
     {
         return state;
@@ -22,6 +26,10 @@ public class GameStateChangedEvent extends EventObject
 
     public interface GameStateListener
     {
+        /**
+         * function for how listener handles change
+         * @param e
+         */
         public void handleStateChange(GameStateChangedEvent e);
 
     }

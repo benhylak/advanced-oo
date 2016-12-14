@@ -36,8 +36,11 @@ public class GameImpl extends Pane implements Game
 
 		env.addStateChangeListener(e ->
 		{
-			if(e.getState() == Environment.GameState.ACTIVE)
+			if(e.getState() == Environment.GameState.ACTIVE) //if game is playing
 			{
+				env.reset_game();
+				getChildren().clear();  // remove all components from the game
+				getChildren().addAll(env.getDrawings());
 				run();
 			}
 			else
@@ -58,7 +61,7 @@ public class GameImpl extends Pane implements Game
 				{
 					if (env.isActive())
 					{
-						env.movePaddleTo(event.getX(), event.getY());
+						env.movePaddleTo(event.getX(), event.getY()); //move paddle to mouse location
 					}
 				}
 		);
@@ -78,11 +81,19 @@ public class GameImpl extends Pane implements Game
 		env.newGame();
 	}
 
+	/**
+	 * Returns name of Game
+	 * @return name of game
+	 */
 	public String getName()
 	{
 		return "Zutopia";
 	}
 
+	/**
+	 * Returns panel of game
+	 * @return panel of game
+	 */
 	public Pane getPane()
 	{
 		return this;
@@ -120,11 +131,4 @@ public class GameImpl extends Pane implements Game
 		a.start();
 	}
 }
-
-	/**
-	 * Updates the state of the game at each timestep. In particular, this method should
-	 * move the ball, check if the ball collided with any of the animals, walls, or the paddle, etc.
-	 * @param deltaNanoTime how much time (in nanoseconds) has transpired since the last update
-	 * @return the current game state
-	 */
 

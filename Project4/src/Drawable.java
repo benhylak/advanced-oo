@@ -1,9 +1,13 @@
 import javafx.scene.Node;
 
 /**
- * Created by benhylak on 12/10/16.
+ * Object that has node to be drawn
  */
 public interface Drawable
 {
+    /**
+     *
+     * @return drawing for object
+     */
     public Node getDrawing();
 }

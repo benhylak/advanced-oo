@@ -1,11 +1,11 @@
 import java.util.EventObject;
 
 /**
- * Created by benhylak on 12/11/16.
+ * General event for a hit
  */
 public class HitEvent<T> extends EventObject
 {
-    T source;
+    T source; //wall or animal
     Ball b;
 
     public HitEvent(T a, Ball b)
@@ -18,6 +18,10 @@ public class HitEvent<T> extends EventObject
 
     public interface HitListener<U>
     {
+        /**
+         * How listener handles hit
+         * @param e the hit event to handle
+         */
         public void handleHit(HitEvent<U> e);
     }
 }

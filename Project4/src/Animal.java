@@ -4,7 +4,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
- * Created by benhylak on 12/11/16.
+ * Type of game object that is drawable and has a picture. Once it is hit, an animal disappears and cannot be hit
+ * again
  */
 
 public abstract class Animal extends GameObj implements Drawable
@@ -15,24 +16,20 @@ public abstract class Animal extends GameObj implements Drawable
     Image picture;
     ImageView picNode;
 
-    int xPos;
-    int yPos;
-
     boolean hasBeenHit = false;
 
-    public Animal()
-    {
-        xVel = 0;
-        yVel = 0;
-    }
 
     public Animal(int xPos, int yPos, String imagePath)
     {
+        super();
+
         this.xPos = xPos;
         this.yPos = yPos;
 
         picture = new Image(imagePath);
         picNode = new ImageView(picture);
+
+        picNode.resize(50, 50);
 
         picNode.setLayoutX(xPos);
         picNode.setLayoutY(yPos);
@@ -50,6 +47,9 @@ public abstract class Animal extends GameObj implements Drawable
         return picNode.boundsInParentProperty().get();
     }
 
+    /**
+     * Record that this animal has been hit.
+     */
     public void hit()
     {
         getDrawing().setVisible(false);

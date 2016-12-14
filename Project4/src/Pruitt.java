@@ -1,9 +1,9 @@
 /**
- * Created by benhylak on 12/13/16.
+ * Pruitt is a type of animal that has the face of a horse. (And doesn't believe in climate change)
  */
 public class Pruitt extends Animal
 {
-    static String imagePath = "Resources/Pictures/goat.jpg";
+    static String imagePath = "Resources/Pictures/horse.jpg";
 
     public Pruitt(int xPos, int yPos)
     {

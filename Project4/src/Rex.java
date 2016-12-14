@@ -1,5 +1,6 @@
 /**
- * Created by benhylak on 12/13/16.
+ * Rex is a type of animal that has the face of a goat.
+ *
  */
 public class Rex extends Animal
 {
