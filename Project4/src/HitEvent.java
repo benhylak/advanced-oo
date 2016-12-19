@@ -8,6 +8,11 @@ public class HitEvent<T> extends EventObject
     T source; //wall or animal
     Ball b;
 
+    /**
+     * Hit event constructor
+     * @param a what the ball hit
+     * @param b the ball
+     */
     public HitEvent(T a, Ball b)
     {
         super(a);
@@ -16,6 +21,10 @@ public class HitEvent<T> extends EventObject
         this.b = b;
     }
 
+    /**
+     * Listener for hit event
+     * @param <U> type
+     */
     public interface HitListener<U>
     {
         /**

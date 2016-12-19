@@ -76,7 +76,7 @@ public class Environment
     {
         envDrawings.clear();
 
-        for(GameObj g : gamePieces)
+        for(GameObj g : gamePieces) //get all of the drawings from the environment and put it into gamepieces
         {
             if(g instanceof Drawable)
             {
@@ -114,7 +114,7 @@ public class Environment
         paddle.updateVelocity(deltaNanoTime);
         ball.updatePosition(deltaNanoTime);
 
-        ball.checkCollisions(gamePieces);
+        ball.checkCollisions(gamePieces); //identifies if the ball has collided with anything, fires event if so
     }
 
     /**
@@ -124,7 +124,7 @@ public class Environment
     {
         reset_game();
 
-        changeState(GameState.NEW);
+        changeState(GameState.NEW); //change state
     }
 
     /**
@@ -151,7 +151,7 @@ public class Environment
     }
 
     /**
-     * Makes/places our animals
+     * Makes/places our animals. Alternates inbetween our three types of animals.
      */
     public void make_animals()
     {
@@ -159,9 +159,9 @@ public class Environment
 
         int counter = 0;
 
-        for(int i = 25; i < height * 1/2; i += 70)
+        for(int i = 25; i < height * 1/2; i += 70) //*~~~~~~ magic numbers ~~~~~~~~~*//
         {
-            for(int j=25; j< width; j+= width/4)
+            for(int j=25; j< width; j+= width/4) //*~~~~~~~~~ more magic numbers ~~~~~~~*//
             {
                 counter++;
                 Animal a;
@@ -173,6 +173,9 @@ public class Environment
                         break;
                     case 2:
                         a = new Pruitt(j, i);
+                        break;
+                    case 3:
+                        a = new Carson(j,i);
                         break;
                     default:
                         a = new Rex(j, i);
@@ -205,16 +208,16 @@ public class Environment
 
             a.hit();
 
-            if(--animals_left  <= 0) {
+            if(--animals_left  <= 0) { //if there aren't any more animals left
                 changeState(GameState.LOST);
             }
         });
 
         ball.addWallCollisionListener(e ->
         {
-            if (e.getSource() instanceof HorizontalWall.LowerWall)
+            if (e.getSource() instanceof HorizontalWall.LowerWall) //if the wall is a lower wall
             {
-                currentLives--;
+                currentLives--; // you lost a life
             }
 
             if (currentLives <= 0)

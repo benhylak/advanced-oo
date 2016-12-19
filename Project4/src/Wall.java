@@ -2,7 +2,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 
 /**
- * Created by benhylak on 12/10/16.
+ * Class for a wall game object. A wall exists namely at the edges of the screen where nothing is drawn, but you'd
+ * expect the ball to bounce back. (Could be made drawable by extending + implementing the drawable interface)
  */
 public abstract class Wall extends GameObj
 {
@@ -14,6 +15,13 @@ public abstract class Wall extends GameObj
 
     BoundingBox wallBounds; //bounding box for wall
 
+    /**
+     * Default constructor for a wall
+     *
+     * @param minX minimum x coordinate (upper left corner)
+     * @param minY minimum y coordinate (upper left corner)
+     * @param size of the wall
+     */
     public Wall(double minX, double minY, double size)
     {
         this.minX = minX;

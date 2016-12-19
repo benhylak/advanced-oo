@@ -4,7 +4,7 @@
  */
 public class Rex extends Animal
 {
-    static String imagePath = "Resources/Pictures/goat.jpg";
+    static String imagePath = "Resources/Pictures/rex.png";
 
     public Rex(int xPos, int yPos)
     {

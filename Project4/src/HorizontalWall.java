@@ -35,12 +35,22 @@ public class HorizontalWall extends Wall
      */
     public static class UpperWall extends HorizontalWall
     {
+        /**
+         * Upper wall constructor
+         * @param width
+         * @param height
+         */
         public UpperWall(double width, double height)
         {
             super(0, 0, width);
             wallBounds = new BoundingBox(this.minX, this.minY-wall_padding, width, wall_padding);
         }
 
+        /**
+         * Detects if there is a collision
+         * @param o object to test collision with
+         * @return
+         */
         @Override
         public boolean isCollision(GameObj o)
         {
@@ -48,6 +58,10 @@ public class HorizontalWall extends Wall
                     o.getBoundingBox().getMinY() < wallBounds.getMaxY());
         }
 
+        /**
+         *
+         * @return direction the ball was hit from
+         */
         @Override
         public HitDirection getHitDirection()
         {
@@ -60,6 +74,11 @@ public class HorizontalWall extends Wall
      */
     public static class LowerWall extends HorizontalWall
     {
+        /**
+         * Lower wall constructor
+         * @param width
+         * @param height
+         */
         public LowerWall(double width, double height)
         {
             super(0, height, width);
@@ -81,7 +100,7 @@ public class HorizontalWall extends Wall
 
         /**
          *
-         * @return hit dir
+         * @return hit direction
          */
         @Override
         public HitDirection getHitDirection()

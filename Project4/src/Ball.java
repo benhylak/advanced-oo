@@ -38,6 +38,10 @@ public class Ball extends GameObj implements Drawable
 	public static final double TOP_BOTTOM_MARGIN = 5;
 	public static final double LEFT_RIGHT_MARGIN = 20;
 
+	/**
+	 * Gets the drawing for this ball
+	 * @return circle representing the ball
+	 */
 	public Node getDrawing()
 	{
 		return getCircle();
@@ -159,9 +163,10 @@ public class Ball extends GameObj implements Drawable
 	}
 
 	/**
-	 * Adjusts the ball's course from a collision with obj.
+	 * Adjusts the ball's course from a collision with obj. Accounts for direction hit was from and the objects velocity
+	 * when it was hit. (Which allows for soft or hard hits..)
 	 *
-	 * @param obj
+	 * @param obj Game object to adjust for collision with ball
 	 */
 	public void adjustForCollision(GameObj obj)
 	{

@@ -90,7 +90,7 @@ public class VerticalWall extends Wall
         public boolean isCollision(GameObj o)
         {
             return (super.isCollision(o) ||
-                    o.getBoundingBox().getMaxX() > wallBounds.getMinX());
+                    o.getBoundingBox().getMaxX() > wallBounds.getMinX()); //special collision test for wall.. test bounds
         }
 
         /**

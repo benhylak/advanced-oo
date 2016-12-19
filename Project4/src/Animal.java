@@ -18,7 +18,13 @@ public abstract class Animal extends GameObj implements Drawable
 
     boolean hasBeenHit = false;
 
-
+    /**
+     * Animal constructor
+     *
+     * @param xPos x coordinate of the animal's location
+     * @param yPos y coordinate of the animal's location
+     * @param imagePath path to the animal's image
+     */
     public Animal(int xPos, int yPos, String imagePath)
     {
         super();
@@ -35,12 +41,20 @@ public abstract class Animal extends GameObj implements Drawable
         picNode.setLayoutY(yPos);
     }
 
+    /**
+     *
+     * @return Node for drawing this animal's image
+     */
     @Override
     public Node getDrawing()
     {
         return picNode;
     }
 
+    /**
+     *
+     * @return the bounding box for this animal
+     */
     @Override
     public Bounds getBoundingBox()
     {
@@ -57,6 +71,12 @@ public abstract class Animal extends GameObj implements Drawable
         hasBeenHit = true;
     }
 
+    /**
+     * Detects whether this animal has collided with another object. If the animal has already been hit, it can not
+     * be hit again because it will disappear
+     * @param o object to test collision with
+     * @return
+     */
     @Override
     public boolean isCollision(GameObj o)
     {

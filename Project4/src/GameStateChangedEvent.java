@@ -24,6 +24,9 @@ public class GameStateChangedEvent extends EventObject
         return state;
     }
 
+    /**
+     * Interface for game state listener
+     */
     public interface GameStateListener
     {
         /**

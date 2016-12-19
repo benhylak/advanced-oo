@@ -58,24 +58,18 @@ public class GameImpl extends Pane implements Game
 		});
 
 		setOnMouseMoved(event ->
+			{
+				if (env.isActive()) //if the game is running
 				{
-					if (env.isActive())
-					{
-						env.movePaddleTo(event.getX(), event.getY()); //move paddle to mouse location
-					}
+					env.movePaddleTo(event.getX(), event.getY()); //move paddle to mouse location
 				}
+			}
 		);
 
-		setOnMouseClicked(new EventHandler<MouseEvent>()
+		setOnMouseClicked(e->
 		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				//GameImpl.this.setOnMouseClicked(null);
-				// As soon as the mouse is clicked, remove the startLabel from the game board
 				getChildren().remove(startLabel);
 				env.startGame();
-			}
 		});
 
 		env.newGame();
@@ -87,7 +81,7 @@ public class GameImpl extends Pane implements Game
 	 */
 	public String getName()
 	{
-		return "Zutopia";
+		return "Cleaning the Cabinet";
 	}
 
 	/**

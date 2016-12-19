@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
  */
 public class Trump extends Animal
 {
-    static String imagePath = "Resources/Pictures/duck.jpg";
+    static String imagePath = "Resources/Pictures/trump.png";
 
     public Trump(int xPos, int yPos)
     {
