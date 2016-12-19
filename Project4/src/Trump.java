@@ -2,7 +2,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
- * Created by benhylak on 12/12/16.
+ * Trump is a type of animal that has the face of a duck. (And matching color hair)
  */
 public class Trump extends Animal
 {

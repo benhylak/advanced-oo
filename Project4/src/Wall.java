@@ -12,7 +12,7 @@ public abstract class Wall extends GameObj
     double minY;
     double size;
 
-    BoundingBox wallBounds;
+    BoundingBox wallBounds; //bounding box for wall
 
     public Wall(double minX, double minY, double size)
     {

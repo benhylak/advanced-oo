@@ -6,6 +6,12 @@ import javafx.geometry.Bounds;
  */
 public class HorizontalWall extends Wall
 {
+    /**
+     *
+     * @param minX minimum x value
+     * @param minY minimum y value
+     * @param width width of wall
+     */
     public HorizontalWall(double minX, double minY, double width)
     {
         super(minX, minY, width);
@@ -14,12 +20,19 @@ public class HorizontalWall extends Wall
     }
 
 
+    /**
+     * Bounding box for wall
+     * @return bounding box
+     */
     @Override
     public Bounds getBoundingBox()
     {
         return wallBounds;
     }
 
+    /**
+     * Special type of horizontal wall on top
+     */
     public static class UpperWall extends HorizontalWall
     {
         public UpperWall(double width, double height)
@@ -42,6 +55,9 @@ public class HorizontalWall extends Wall
         }
     }
 
+    /**
+     * Special type of lower ball on bottom
+     */
     public static class LowerWall extends HorizontalWall
     {
         public LowerWall(double width, double height)
@@ -51,6 +67,11 @@ public class HorizontalWall extends Wall
             wallBounds = new BoundingBox(this.minX, this.minY, width, wall_padding);
         }
 
+        /**
+         *
+         * @param o object to test collision with
+         * @return if object is collided
+         */
         @Override
         public boolean isCollision(GameObj o)
         {
@@ -58,6 +79,10 @@ public class HorizontalWall extends Wall
                     o.getBoundingBox().getMaxY() > wallBounds.getMinY());
         }
 
+        /**
+         *
+         * @return hit dir
+         */
         @Override
         public HitDirection getHitDirection()
         {

@@ -26,7 +26,7 @@ public class Ball extends GameObj implements Drawable
 	 */
 	public static final double INITIAL_VY = 1e-7;
 
-	public static final double MAX_V = 5.5e-7;
+	public double MAX_V = 5.5e-7;
 	// Instance variables
 	// (x,y) is the position of the center of the ball.
 	private double x, y;
@@ -125,17 +125,17 @@ public class Ball extends GameObj implements Drawable
 
 		HitDirection hitDir = HitDirection.UNKNOWN;
 
-		if(obj.getHitDirection() != HitDirection.UNKNOWN)
+		if(obj.getHitDirection() != HitDirection.UNKNOWN) //if the hit direction is known
 		{
 			hitDir =obj.getHitDirection();
 		}
 		else if(isYCollision(objBounds))
 		{
-			if(ballBounds.getMaxY() - objBounds.getMinY() <= TOP_BOTTOM_MARGIN)
+			if(ballBounds.getMaxY() - objBounds.getMinY() <= TOP_BOTTOM_MARGIN) //within a margin of error of the top
 			{
 				hitDir = HitDirection.BELOW;
 			}
-			else if(objBounds.getMaxY() - ballBounds.getMinY() <= TOP_BOTTOM_MARGIN)
+			else if(objBounds.getMaxY() - ballBounds.getMinY() <= TOP_BOTTOM_MARGIN) //within a margin of error of the bottom
 			{
 				hitDir = HitDirection.ABOVE;
 			}
@@ -144,11 +144,11 @@ public class Ball extends GameObj implements Drawable
 		}
 		else if(isXCollision(objBounds))
 		{
-			if(objBounds.getMaxX() - ballBounds.getMinX() <= LEFT_RIGHT_MARGIN)
+			if(objBounds.getMaxX() - ballBounds.getMinX() <= LEFT_RIGHT_MARGIN) //within a margin of error of the left
 			{
 				hitDir = HitDirection.LEFT;
 			}
-			else if(ballBounds.getMaxX() - objBounds.getMinX() <= LEFT_RIGHT_MARGIN)
+			else if(ballBounds.getMaxX() - objBounds.getMinX() <= LEFT_RIGHT_MARGIN) //.....you get the point
 			{
 				hitDir = HitDirection.RIGHT;
 			}
@@ -226,17 +226,12 @@ public class Ball extends GameObj implements Drawable
 
 		}
 
-		if(xVel+obj.xVel>MAX_V); //if over max velocity, set to max velocity
-		if(yVel > MAX_V) yVel =MAX_V;
 
-		if(Math.abs(xVel+2*obj.xVel) > MAX_V || Math.abs(yVel + 2*obj.yVel) > MAX_V)
-		{
-			xVel -= obj.xVel;
-			yVel -= obj.yVel;
-		}
+		if(this.xVel > MAX_V) this.xVel = MAX_V;
+		if(this.yVel > MAX_V) this.yVel = MAX_V;
 
-		this.xVel += 2* obj.xVel; //add objects to velocity to our velocity
-		this.yVel += 2* obj.yVel;
+		this.xVel += obj.xVel; //add objects to velocity to our velocity
+		this.yVel += obj.yVel;
 	}
 
 	/**
@@ -330,7 +325,7 @@ public class Ball extends GameObj implements Drawable
 
 	/**
 	 * Returns bounding box of this ball
-	 * @return bounding box of ball
+	 * @return bounding box
 	 */
 	@Override
 	public Bounds getBoundingBox()
