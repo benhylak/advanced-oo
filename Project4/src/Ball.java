@@ -6,7 +6,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Class that implements a ball with a position and velocity.
@@ -33,8 +32,8 @@ public class Ball extends GameObj implements Drawable
 	private double x, y;
 	private Circle circle;
 
-	private ArrayList<WallCollisionEvent.WallCollisionListener> collisionListeners;
-	private ArrayList<AnimalHitEvent.AnimalHitListener> hitListeners;
+	private ArrayList<HitEvent.HitListener<Wall>> wallHitListeners;
+	private ArrayList<HitEvent.HitListener<Animal>> animalHitListeners;
 
 	public static final double TOP_BOTTOM_MARGIN = 5;
 	public static final double LEFT_RIGHT_MARGIN = 20;
@@ -67,8 +66,8 @@ public class Ball extends GameObj implements Drawable
 		circle.setLayoutY(y - BALL_RADIUS);
 		circle.setFill(Color.BLACK);
 
-		collisionListeners = new ArrayList<>();
-		hitListeners = new ArrayList<>();
+		wallHitListeners = new ArrayList<>();
+		animalHitListeners = new ArrayList<>();
 	}
 
 	/**
@@ -111,7 +110,7 @@ public class Ball extends GameObj implements Drawable
 		}
 	}
 
-	public void adjustForCollision(GameObj obj)
+	public HitDirection determineHitDirection(GameObj obj)
 	{
 		Bounds objBounds = obj.getBoundingBox();
 		Bounds ballBounds = getBoundingBox();
@@ -120,44 +119,49 @@ public class Ball extends GameObj implements Drawable
 
 		if(obj.getHitDirection() != HitDirection.UNKNOWN)
 		{
-			hitDir = obj.getHitDirection();
+			hitDir =obj.getHitDirection();
 		}
-		else
+		else if(isYCollision(objBounds))
 		{
-			if(isYCollision(objBounds))
+			if(ballBounds.getMaxY() - objBounds.getMinY() <= TOP_BOTTOM_MARGIN)
 			{
-				if(ballBounds.getMaxY() - objBounds.getMinY() <= TOP_BOTTOM_MARGIN)
-				{
-					hitDir = HitDirection.BELOW;
-				}
-				else if(objBounds.getMaxY() - ballBounds.getMinY() <= TOP_BOTTOM_MARGIN)
-				{
-					hitDir = HitDirection.ABOVE;
-				}
-				else hitDir = HitDirection.Y_UNK;
+				hitDir = HitDirection.BELOW;
+			}
+			else if(objBounds.getMaxY() - ballBounds.getMinY() <= TOP_BOTTOM_MARGIN)
+			{
+				hitDir = HitDirection.ABOVE;
+			}
+			else hitDir = HitDirection.Y_UNK;
 
-			}
-			else if(isXCollision(objBounds))
+		}
+		else if(isXCollision(objBounds))
+		{
+			if(objBounds.getMaxX() - ballBounds.getMinX() <= LEFT_RIGHT_MARGIN)
 			{
-				if(objBounds.getMaxX() - ballBounds.getMinX() <= LEFT_RIGHT_MARGIN)
-				{
-					hitDir = HitDirection.LEFT;
-				}
-				else if(ballBounds.getMaxX() - objBounds.getMinX() <= LEFT_RIGHT_MARGIN)
-				{
-					hitDir = HitDirection.RIGHT;
-				}
-				else hitDir = HitDirection.X_UNK;
+				hitDir = HitDirection.LEFT;
 			}
+			else if(ballBounds.getMaxX() - objBounds.getMinX() <= LEFT_RIGHT_MARGIN)
+			{
+				hitDir = HitDirection.RIGHT;
+			}
+			else hitDir = HitDirection.X_UNK;
 		}
 
-		switch (hitDir)
+		return hitDir;
+	}
+
+	public void adjustForCollision(GameObj obj)
+	{
+		Bounds objBounds = obj.getBoundingBox();
+		Bounds ballBounds = getBoundingBox();
+
+		switch (determineHitDirection(obj))
 		{
 			case ABOVE:
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
-					this.y = objBounds.getMaxY() - 3;
+					this.y = objBounds.getMaxY() - 1;
 				}
 
 				yVel =  1 * Math.abs(yVel);
@@ -169,7 +173,7 @@ public class Ball extends GameObj implements Drawable
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
-					this.y = objBounds.getMinY() + 3;
+					this.y = objBounds.getMinY() - 1;
 				}
 
 				yVel = -1 * Math.abs(yVel); //lower collision
@@ -181,7 +185,7 @@ public class Ball extends GameObj implements Drawable
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
-					this.x = objBounds.getMaxX() + 3;
+					this.x = objBounds.getMaxX() - 1;
 				}
 
 				xVel =  Math.abs(xVel);
@@ -193,7 +197,7 @@ public class Ball extends GameObj implements Drawable
 			{
 				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
 				{
-					this.x = objBounds.getMinX() - 3;
+					this.x = objBounds.getMinX() - 1;
 				}
 
 				xVel = -1 * Math.abs(xVel); //left collision
@@ -252,40 +256,35 @@ public class Ball extends GameObj implements Drawable
 		yVel *= -1;
 	}
 
-	public void addWallCollisionListener(WallCollisionEvent.WallCollisionListener listener)
+	public void addWallCollisionListener(HitEvent.HitListener<Wall> listener)
 	{
-		collisionListeners.add(listener);
+		wallHitListeners.add(listener);
 	}
 
-	public void addAnimalHitListener(AnimalHitEvent.AnimalHitListener listener)
+	public void addAnimalHitListener(HitEvent.HitListener<Animal> listener)
 	{
-		hitListeners.add(listener);
+		animalHitListeners.add(listener);
 	}
-
 
 	public void notifyWallCollision(Wall wall)
 	{
-		for(WallCollisionEvent.WallCollisionListener l : collisionListeners)
+		for(HitEvent.HitListener<Wall> l : wallHitListeners)
 		{
-			l.handleCollision(new WallCollisionEvent(wall, this));
+			l.handleHit(new HitEvent<Wall>(wall, this));
 		}
 	}
 
 	public void notifyAnimalHit(Animal a)
 	{
-		for(AnimalHitEvent.AnimalHitListener l : hitListeners)
+		for(HitEvent.HitListener l : animalHitListeners)
 		{
-			l.handleAnimalHit(new AnimalHitEvent(a, this));
+			l.handleHit(new HitEvent<Animal>(a, this));
 		}
 	}
 
 	@Override
 	public Bounds getBoundingBox()
 	{
-		//BoundingBox.BoundingPoint lowerLeft = getLowerLeft();
-
-		//BoundingBox.BoundingPoint upperRight = new BoundingBox.BoundingPoint(lowerLeft, BALL_RADIUS, BALL_RADIUS);
-
 		return circle.getBoundsInParent();
 	}
 }
