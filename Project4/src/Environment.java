@@ -42,7 +42,7 @@ public class Environment
         gamePieces = new ArrayList<GameObj>();
 
         gamePieces.add(paddle = new Paddle());
-        gamePieces.add(ball = new Ball());
+        ball = new Ball();
 
         ball.addAnimalHitListener(e ->
         {
@@ -118,6 +118,8 @@ public class Environment
                 drawings.add(((Drawable) g).getDrawing());
             }
         }
+
+        drawings.add(ball.getDrawing());
 
         return drawings.toArray(new Node[drawings.size()]);
     }
