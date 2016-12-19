@@ -25,4 +25,5 @@ public class WallCollisionEvent extends EventObject
     {
         public void handleCollision(WallCollisionEvent e);
     }
+
 }

@@ -21,12 +21,13 @@ public class Ball extends GameObj implements Drawable
 	/**
 	 * The initial velocity of the ball in the x direction.
 	 */
-	public static final double INITIAL_VX = 1e-7;
+	public static final double INITIAL_VX = 0;
 	/**
 	 * The initial velocity of the ball in the y direction.
 	 */
 	public static final double INITIAL_VY = 1e-7;
 
+	public static final double MAX_V = 7e-7;
 	// Instance variables
 	// (x,y) is the position of the center of the ball.
 	private double x, y;
@@ -35,6 +36,8 @@ public class Ball extends GameObj implements Drawable
 	private ArrayList<WallCollisionEvent.WallCollisionListener> collisionListeners;
 	private ArrayList<AnimalHitEvent.AnimalHitListener> hitListeners;
 
+	public static final double TOP_BOTTOM_MARGIN = 5;
+	public static final double LEFT_RIGHT_MARGIN = 20;
 
 	public Node getDrawing()
 	{
@@ -85,17 +88,11 @@ public class Ball extends GameObj implements Drawable
 		circle.setTranslateY(y - (circle.getLayoutY() + BALL_RADIUS));
 	}
 
-//	private BoundingBox.BoundingPoint getLowerLeft()
-//	{
-//		return new BoundingBox.BoundingPoint(circle.getTranslateX() + circle.getLayoutX(),
-//				circle.getTranslateY() + circle.getLayoutY());
-//	}
-
 	public void checkCollisions(Collection<GameObj> objs)
 	{
 		for(GameObj obj : objs)
 		{
-			if(obj.isCollision(this))
+			if(obj != this && obj.isCollision(this))
 			{
 				if(obj instanceof Wall)
 				{
@@ -105,12 +102,154 @@ public class Ball extends GameObj implements Drawable
 				{
 					notifyAnimalHit((Animal)obj);
 				}
-				else if(!(obj instanceof Ball))
+
+				if(!(obj instanceof Ball))
 				{
-					System.out.println("Collided with Paddle");
+					adjustForCollision(obj);
 				}
 			}
 		}
+	}
+
+	public void adjustForCollision(GameObj obj)
+	{
+		Bounds objBounds = obj.getBoundingBox();
+		Bounds ballBounds = getBoundingBox();
+
+		HitDirection hitDir = HitDirection.UNKNOWN;
+
+		if(obj.getHitDirection() != HitDirection.UNKNOWN)
+		{
+			hitDir = obj.getHitDirection();
+		}
+		else
+		{
+			if(isYCollision(objBounds))
+			{
+				if(ballBounds.getMaxY() - objBounds.getMinY() <= TOP_BOTTOM_MARGIN)
+				{
+					hitDir = HitDirection.BELOW;
+				}
+				else if(objBounds.getMaxY() - ballBounds.getMinY() <= TOP_BOTTOM_MARGIN)
+				{
+					hitDir = HitDirection.ABOVE;
+				}
+				else hitDir = HitDirection.Y_UNK;
+
+			}
+			else if(isXCollision(objBounds))
+			{
+				if(objBounds.getMaxX() - ballBounds.getMinX() <= LEFT_RIGHT_MARGIN)
+				{
+					hitDir = HitDirection.LEFT;
+				}
+				else if(ballBounds.getMaxX() - objBounds.getMinX() <= LEFT_RIGHT_MARGIN)
+				{
+					hitDir = HitDirection.RIGHT;
+				}
+				else hitDir = HitDirection.X_UNK;
+			}
+		}
+
+		switch (hitDir)
+		{
+			case ABOVE:
+			{
+				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
+				{
+					this.y = objBounds.getMaxY() - 3;
+				}
+
+				yVel =  1 * Math.abs(yVel);
+
+				break;
+			}
+
+			case BELOW:
+			{
+				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
+				{
+					this.y = objBounds.getMinY() + 3;
+				}
+
+				yVel = -1 * Math.abs(yVel); //lower collision
+
+				break;
+			}
+
+			case LEFT:
+			{
+				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
+				{
+					this.x = objBounds.getMaxX() + 3;
+				}
+
+				xVel =  Math.abs(xVel);
+
+				break;
+			}
+
+			case RIGHT:
+			{
+				if(objBounds.contains(ballBounds)) //uh oh, we are stuck!
+				{
+					this.x = objBounds.getMinX() - 3;
+				}
+
+				xVel = -1 * Math.abs(xVel); //left collision
+
+				break;
+			}
+
+			case Y_UNK: reverseVelocityY();
+				break;
+
+			case X_UNK: reverseVelocityX();
+				break;
+
+		}
+
+		if(xVel>MAX_V) xVel = MAX_V;
+		if(yVel > MAX_V) yVel =MAX_V;
+
+		if(Math.abs(xVel+obj.xVel) > MAX_V || Math.abs(yVel + obj.yVel) > MAX_V)
+		{
+			xVel -= Math.max(obj.xVel, obj.yVel);
+			yVel -= Math.max(obj.xVel, obj.yVel);
+		}
+
+		this.xVel += obj.xVel;
+		this.yVel += obj.yVel;
+	}
+
+	public boolean isYCollision(Bounds target)
+	{
+		Bounds upperYBound = new BoundingBox(target.getMinX(), target.getMaxY(), target.getWidth(), 0);
+		Bounds lowerYBound = new BoundingBox(target.getMinX(), target.getMinY(),  target.getWidth(), 0);
+
+		Bounds ballBounds = getBoundingBox();
+
+		return(ballBounds.intersects(upperYBound) || ballBounds.intersects(lowerYBound));
+	}
+
+	public boolean isXCollision(Bounds target)
+	{
+		Bounds rightXBound = new BoundingBox(target.getMaxX(), target.getMinY(), 0, target.getHeight());
+		Bounds leftXBound = new BoundingBox(target.getMinX(), target.getMinY(), 0, target.getHeight());
+
+		Bounds ballBounds = getBoundingBox();
+
+		return(ballBounds.intersects(rightXBound) || ballBounds.intersects(leftXBound));
+	}
+
+	private void reverseVelocityX()
+	{
+		xVel *= -1;
+	}
+
+	private void reverseVelocityY()
+	{
+		yVel *= -1;
 	}
 
 	public void addWallCollisionListener(WallCollisionEvent.WallCollisionListener listener)
