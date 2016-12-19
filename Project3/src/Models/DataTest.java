@@ -3,14 +3,15 @@ package Models;
 import com.cs210x.CPUClock;
 import com.cs210x.Collection210X;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.sql.Time;
+import java.util.Iterator;
 import java.util.Random;
 
 /**
- * Created by benhylak on 12/4/16.
+ * Class has a functions for testing the length of various functions for a Collection210X data structure.
+ * Can also create TimedTests that can be iterated through.
  */
-public class DataTest
+public class DataTest implements Iterable<TimedTest>
 {
     Collection210X<Integer> toTest;
     int timesToRun;
@@ -24,17 +25,15 @@ public class DataTest
         this.timesToRun = timesToRun;
     }
 
-    public void setData(Collection210X<Integer> newToTest)
+    public void setDataStructure(Collection210X<Integer> newToTest)
     {
        toTest = newToTest;
     }
 
-    public Test[] getTests(Collection210X<Integer> nextToTest)
+    private TimedTest[] getTests()
     {
-        setData(nextToTest);
-
-        return new Test[]{
-                new Test(timesToRun)
+        return new TimedTest[]{
+                new TimedTest(timesToRun)
                 {
                     public long test(int N)
                     {
@@ -46,7 +45,7 @@ public class DataTest
                     }
                 },
 
-                new Test(timesToRun)
+                new TimedTest(timesToRun)
                 {
                     public long test(int N)
                     {
@@ -58,7 +57,7 @@ public class DataTest
                     }
                 },
 
-                new Test(timesToRun)
+                new TimedTest(timesToRun)
                 {
                     public long test(int N)
                     {
@@ -75,7 +74,7 @@ public class DataTest
     /**
      *Tests duration of add method on N elements
      *
-     * @param N Models.Test method on N elements
+     * @param N Models.TimedTest method on N elements
      * @return Avg cpu time to run
      */
     public long testAdd(int N)
@@ -93,7 +92,7 @@ public class DataTest
             addDurs[i] = elapsedTime();
         }
 
-        return Test.average(addDurs);
+        return TimedTest.average(addDurs);
     }
 
     /**
@@ -116,11 +115,11 @@ public class DataTest
         int toFind = random.nextInt(N);
         ////////////////
 
-        startClock(); //Start Models.Test Timer
+        startClock(); //Start Models.TimedTest Timer
 
-        toTest.contains(toFind); //Models.Test
+        toTest.contains(toFind); //Models.TimedTest
 
-        return elapsedTime(); //End Models.Test Timer
+        return elapsedTime(); //End Models.TimedTest Timer
     }
 
     /**
@@ -144,11 +143,11 @@ public class DataTest
         int toRemove = random.nextInt(N);
         ////////////////
 
-        startClock(); //start Models.Test Timer
+        startClock(); //start Models.TimedTest Timer
 
-        toTest.remove(toRemove); //Models.Test
+        toTest.remove(toRemove); //Models.TimedTest
 
-        long time = elapsedTime(); //end Models.Test timer
+        long time = elapsedTime(); //end Models.TimedTest timer
 
         toTest.add(toRemove);
 
@@ -163,5 +162,31 @@ public class DataTest
     public long elapsedTime()
     {
         return (CPUClock.getNumTicks() - start);
+    }
+
+    @Override
+    public Iterator<TimedTest> iterator()
+    {
+        Iterator<TimedTest> it = new Iterator<TimedTest>() {
+
+            private int currentIndex = 0;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex < getTests().length;
+            }
+
+            @Override
+            public TimedTest next()
+            {
+                return getTests()[currentIndex];
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+        return it;
     }
 }

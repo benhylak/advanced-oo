@@ -5,6 +5,7 @@ import Models.DataPoint;
 import java.util.*;
 
 /**
+ * Encapsulates the summary of a Test ran on a data summary over a range of values for N (elements in the data structure)
  * Created by benhylak on 12/5/16.
  */
 public class TestSummary implements Iterable<DataPoint<Integer, Long>>
@@ -40,7 +41,7 @@ public class TestSummary implements Iterable<DataPoint<Integer, Long>>
     }
 
     @Override
-    public Iterator<DataPoint<Integer, Long>> iterator()
+    public Iterator<DataPoint<Integer, Long>> iterator() //Iterator to go through all of the data
     {
         Iterator<DataPoint<Integer, Long>> it = new Iterator<DataPoint<Integer,Long>>() {
 

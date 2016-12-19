@@ -1,18 +1,21 @@
-package Models;/*import org.apache.poi.hssf.usermodel.HSSFSheet;
+package Models;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;*/
+import org.apache.poi.ss.usermodel.Row;
 
-//import java.io.File;
-//import java.io.FileNotFoundException;
-//import java.io.FileOutputStream;
-//import java.io.IOException;
-
-import Models.DataPoint;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.util.ArrayList;
 
 /**
+ * Class for handling the summary of all results from all tests ran on a range of data structures. Creates excel
+ * documents, can print to console...
+ *
  * Created by benhylak on 12/5/16.
  */
 public class ResultSummary
@@ -29,7 +32,10 @@ public class ResultSummary
         overallResult.add(indivResult);
     }
 
-   /* public void saveExcel()
+    /**
+     * Saves data to excel. Each structure is in it's own sheet of the workbook
+     */
+    public void saveExcel()
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
 
@@ -41,36 +47,33 @@ public class ResultSummary
 
             for (Models.TestSummary tS: overallResult.get(i))
             {
-                Row row = sheet.createRow(rowNum++);
+                Row row = sheet.createRow(rowNum++); //spacer row
 
-                row = sheet.createRow(rowNum++);
+                row = sheet.createRow(rowNum++); //new row for name of test
                 Cell cell = row.createCell(0);
 
                 cell.setCellValue(tS.getName());
 
                 //_______________________________________
-                int cellNum = 0;
-                row = sheet.createRow(rowNum++);
-                cell = row.createCell(cellNum++);
+                int nCellNum = 0;
+                int valCellNum = 0;
 
+                Row nRow = sheet.createRow(rowNum++); //row for intervals
+                Row valRow = sheet.createRow(rowNum++); //row for values
+
+                cell = nRow.createCell(nCellNum++);
                 cell.setCellValue("Number of Elements: ");
 
-                for (Integer j : tS.getIntervals())
-                {
-                    cell = row.createCell(cellNum++);
-                    cell.setCellValue(j);
-                }
-
-                cellNum = 0;
-                row = sheet.createRow(rowNum++);
-                cell = row.createCell(cellNum++);
-
+                cell = valRow.createCell(valCellNum++);
                 cell.setCellValue("CPU Ticks: ");
 
-                for (Long j : tS.getResults())
+                for (DataPoint<Integer, Long> p : tS)
                 {
-                    cell = row.createCell(cellNum++);
-                    cell.setCellValue(j);
+                    Cell nCell = nRow.createCell(nCellNum++);
+                    nCell.setCellValue(p.getN());
+
+                    Cell valCell = valRow.createCell(valCellNum++);
+                    valCell.setCellValue(p.getVal());
                 }
             }
         }
@@ -90,13 +93,16 @@ public class ResultSummary
         {
             e.printStackTrace();
         }
-    }*/
+    }
 
     public ArrayList<TestSummary> getSummaryFor(int structureNum)
     {
         return overallResult.get(structureNum);
     }
 
+    /**
+     * Print data to console
+     */
     public void printData()
     {
         for(int i=0; i < overallResult.size(); i++)

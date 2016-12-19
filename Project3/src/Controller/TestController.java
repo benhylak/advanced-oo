@@ -15,7 +15,10 @@ import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 import Models.*;
+
 /**
+ * Controller for TestScreen1.fxml. Really quick and dirty... Beats making the graphs manually!
+ *
  * Created by benhylak on 12/5/16.
  */
 public class TestController implements Initializable
@@ -62,24 +65,12 @@ public class TestController implements Initializable
         }
     }
 
-    public void sayHelloWorld(ActionEvent event)
-    {
-
-        chart.getXAxis().setAutoRanging(false);
-        chart.getYAxis().setAutoRanging(true);
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
         final int cs210XTeamIDForProject3 = 5; // TODO CHANGE THIS TO THE TEAM ID YOU USE TO SUBMIT YOUR PROJECT3 ON INSTRUCT-ASSIST.
 
-        // Fetch the collections whose type you must deduce.
-        // Note -- you are free to change the type parameter from Integer to whatever you want. In this
-        // case, make sure to replace (over the next 4 lines of code) Integer with whatever class you prefer.
-        // In addition, you'll need to pass the method getMysteryDataStructure a "sample" (an instance) of
-        // the class you want the collection to store.
-        @SuppressWarnings("unchecked")
+
         final Collection210X<Integer>[] mysteryDataStructures = (Collection210X<Integer>[]) new Collection210X[5];
         for (int i = 0; i < 5; i++) {
             mysteryDataStructures[i] = MysteryDataStructure.getMysteryDataStructure(cs210XTeamIDForProject3, i, new Integer(0));

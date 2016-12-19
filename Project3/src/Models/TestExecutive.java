@@ -1,12 +1,12 @@
 package Models;
 
-import Models.DataTest;
-import Models.ResultSummary;
 import com.cs210x.Collection210X;
 
 import java.util.ArrayList;
 
 /**
+ * Test exectutive runs the tests on the data structures it is given and creates the ResultSummary data as output
+ *
  * Created by benhylak on 12/4/16.
  */
 public class TestExecutive
@@ -14,9 +14,7 @@ public class TestExecutive
     DataTest dataTest;
     Collection210X<Integer>[] structuresToTest;
 
-    static int RUNS_FOR_AVG_DEFAULT = 125;
-
-    ArrayList<String> textResults;
+    static int RUNS_FOR_AVG_DEFAULT = 150;
 
     ResultSummary results;
 
@@ -36,15 +34,18 @@ public class TestExecutive
         results = new ResultSummary();
     }
 
+    /**
+     * Runs all available dataTests on each given structure
+     */
     public void runTests()
     {
-        textResults = new ArrayList<String>();
-
         for(Collection210X<Integer> c : structuresToTest)
         {
             ArrayList<TestSummary> testSummaries = new ArrayList<TestSummary>();
 
-            for (Test t : dataTest.getTests(c)) //get tests for next data structure
+            dataTest.setDataStructure(c); //set data structure to make tests for
+
+            for (TimedTest t : dataTest) //get tests for current data structure
             {
                 testSummaries.add(t.runOnRange(testIntervals));
             }
